@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# apt-get install sshfs
+# adduser <user> fuse
+
+groups=/home/groupes
+me=`whoami`
+server=192.168.0.1
+
+for group in `ssh $server ls $groups`
+do
+    echo "$group"
+    folder=$groups/$group
+    fusermount -u $folder
+    sudo rmdir    $folder
+    sudo mkdir -p $folder
+    sudo chown -R ${me}:${me} $folder
+    sshfs ${me}@${server}:$folder $folder
+    cd $HOME
+    ln -sf $folder
+done

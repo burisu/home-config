@@ -1,0 +1,110 @@
+#!/bin/bash
+
+prog=`basename $0`
+usage() {
+cat <<EOF >&2
+Usage: $prog [Options] [rep_1, rep_2 ... rep_n]
+  affiche la taille des répertoires (ou des fichiers) passés en
+  argument ainsi qu'un joli histogramme en couleur.
+  Par defaut, prend tout les répertoires du répertoire courant.
+  Options : [-r] [+c] [-t] [-l] [-i]
+    -r (récursif)   : Prend tout les sous-répertoire des
+                      répertoires passés en arguments.
+    +c (couleur)    : N'utilise pas les couleurs pour l'affichage.
+    -t (tri)        : Tri du plus grand au plus petit.
+    -l (logarithme) : Histogramme logarithmique.
+    -i (intelligent): couleurs en fonction de la taille.
+EOF
+# '
+exit 1
+}
+
+erreur() {
+echo "$prog: $1" >&2
+}
+
+couleur() {
+if [ "$couleur" = oui ]; then
+  cat
+else
+  sed -e "s:[[0-9]*m::g"
+fi
+}
+
+affiche() {
+if [ "$1" ]; then
+  echo "$@"
+else
+  for dir in * .??*; do
+    [ -d "$dir" ] && [ ! -h "$dir" ] && echo "$dir"
+  done
+fi | xargs du -sk 2>/dev/null | gawk -v uselog=$log -v intel=$intel '
+function long(taille) {
+  if (uselog=="oui")
+    return(1-log(taille[i]+.1)/log(max))
+  else
+    return(1-taille[i]/max)
+}
+BEGIN { max=0; tot=0;
+        chaine="...................."; }
+{ taille[$2]=$1; if ($1>max) max=$1; tot+=$1; }
+END {
+j=1;
+for (i in taille) {
+  if (intel)
+    j=int(long(taille)*6+1)
+  else
+    j=j%6+1
+  printf("[3%im%7i %28s [3%im%s[m\n",j,taille[i],
+         "[4"j"m"substr(chaine,length(chaine)*long(taille)+1)"[m",j,i)
+  }
+  printf("[1m%7i %20s Total\n[m",tot,"");
+}
+' | couleur | $tri
+}
+
+tri=cat
+couleur=oui
+continue=oui
+while [ $continue = oui -a $# -gt 0 ] ; do
+  case $1 in
+    -h*|--h*) usage ;;
+    +r) descend=non ; shift ;;
+    -r) descend=oui ; shift ;;
+    -c) couleur=oui ; shift ;;
+    +c) couleur=non ; shift ;;
+    -t) tri="sort -rn +1" ; shift ;;
+    +t) tri=cat ; shift ;;
+    -l) log=oui; shift ;;
+    +l) log=non; shift ;;
+    -i) intel=oui; shift ;;
+    +i) intel=non; shift ;;
+    --) shift; continue=non ;;
+    -*) erreur "Option invalide : $1" ;;
+    *) continue=non ;;
+  esac
+done
+
+[ $# = 0 ] && descend=non
+if [ $# = 1 -a "$descend" = "" ]; then
+  cd "$1"
+  shift
+fi
+
+debut=oui
+if [ "$descend" = oui ]; then
+  for rep in "$@"; do
+    ancien_rep="$PWD"
+    cd "$rep"
+    if [ "$debut" = "oui" ]; then
+      debut=non
+    else
+      echo
+    fi
+    echo "$rep:"
+    affiche
+    cd "$ancien_rep"
+  done
+else
+  affiche "$@"
+fi
