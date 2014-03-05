@@ -33,3 +33,5 @@
 (add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.gemspec$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.packagit$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.builder$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.jbuilder$" . ruby-mode))

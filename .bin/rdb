@@ -1,12 +1,12 @@
 #!/bin/sh
-db=$1
-ark=$2
+archive=$1
+database=$2
 script=/tmp/rdb-`date +%Y%m%d%H%M%S%N`.sql
 echo "\\\\c postgres" > ${script}
-echo "DROP DATABASE $db;" >> ${script}
-echo "CREATE DATABASE $db;" >> ${script}
-echo "\\\\c $db" >> ${script}
-echo "\\\\i $ark" >> ${script}
-echo "\\\\qecho 'Base de donnée rechargée!'" >> ${script}
+echo "DROP DATABASE $database;" >> ${script}
+echo "CREATE DATABASE $database;" >> ${script}
+echo "\\\\c $database" >> ${script}
+echo "\\\\i $archive" >> ${script}
+echo "\\\\qecho 'Database reloaded!'" >> ${script}
 psql -f $script postgres
 rm $script
