@@ -16,6 +16,9 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "DejaVu Sans Mono" :foundry "unknown" :slant normal :weight normal :height 98 :width normal)))))
 
+(load-library "iso-transl")
+(setq visible-bell t)
+
 (require 'package)
 (add-to-list 'package-archives 
     '("marmalade" .
