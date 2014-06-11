@@ -1,12 +1,27 @@
-#!/bin/sh
-archive=$1
-database=$2
-script=/tmp/rdb-`date +%Y%m%d%H%M%S%N`.sql
-echo "\\\\c postgres" > ${script}
-echo "DROP DATABASE $database;" >> ${script}
-echo "CREATE DATABASE $database;" >> ${script}
-echo "\\\\c $database" >> ${script}
-echo "\\\\i $archive" >> ${script}
-echo "\\\\qecho 'Database reloaded!'" >> ${script}
-psql -f $script postgres
-rm $script
+#!/usr/bin/env ruby
+require 'pathname'
+require 'fileutils'
+
+root = Pathname.new(Dir.pwd)
+
+first = ARGV.shift
+archive, database = nil, nil
+if root.join(first).exist?
+  archive, database = first, ARGV.shift
+else
+  archive, database = ARGV.shift, first
+end
+
+script = "/tmp/rdb-#{Time.now.to_i.to_s(36)}.sql"
+File.open(script, "wb") do |f|
+  f.write "\\c postgres\n"
+  f.write "DROP DATABASE #{database};\n"
+  f.write "CREATE DATABASE #{database};\n"
+  f.write "\\c #{database}\n"
+  f.write "\\i #{archive}\n"
+  f.write "\\qecho 'Database reloaded!'\n"
+end
+
+`psql -f #{script} postgres`
+
+FileUtils.rm script
