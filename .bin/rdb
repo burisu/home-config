@@ -7,7 +7,7 @@ root = Pathname.new(Dir.pwd)
 first = ARGV.shift
 archive, database = nil, nil
 if root.join(first).exist?
-  archive, database = first, ARGV.shift
+  archive, database = first, ARGV.shift || first.split('-').first
 else
   archive, database = ARGV.shift, first
 end

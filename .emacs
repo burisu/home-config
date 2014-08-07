@@ -19,6 +19,10 @@
 
 (load-library "iso-transl")
 (setq visible-bell t)
+(setq standard-indent 1)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq css-indent-offset 2)
 
 (require 'package)
 (add-to-list 'package-archives 
