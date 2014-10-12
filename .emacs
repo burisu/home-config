@@ -23,6 +23,7 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq css-indent-offset 2)
+(setq js-indent-level 2)
 
 (require 'package)
 (add-to-list 'package-archives 
