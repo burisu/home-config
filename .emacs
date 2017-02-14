@@ -35,6 +35,7 @@
 (load "~/.emacs.d/treetop.el")
 
 (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Gemfile.local$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Gemfile.lock$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Plugfile$" . ruby-mode))
@@ -47,3 +48,4 @@
 (add-to-list 'auto-mode-alist '("\\.packagit$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.builder$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.jbuilder$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
